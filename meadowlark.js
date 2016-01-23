@@ -3,17 +3,27 @@ var app = express();
 
 var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
 app.engine('handlebars', handlebars.engine);
-
 app.set('view engine', 'handlebars');
 
+app.use(express.static(__dirname + '/public'));
+
 app.set('port', process.env.PORT || 3000);
+
+var fortunes = [
+    "Conquer your fears or they will conquer you.",
+    "Rivers need springs.",
+    "Do not fear what you don't know.",
+    "You will have a pleasant surprise.",
+    "Whenever possible, keep it simple.",
+];
 
 app.get('/', function(request, response) {
     response.render('home');
 });
 
 app.get('/about', function(request, response) {
-    response.render('about');
+    var randFortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+    app.render('about', {fortune: randFortune});
 });
 
 app.use(function(request, response) {
