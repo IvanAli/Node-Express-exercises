@@ -1,0 +1,14 @@
+{
+  "name": "meadowlark.js",
+  "version": "1.0.0",
+  "description": "Tutorial from Web Development with Node.js and Express.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Ivan",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
