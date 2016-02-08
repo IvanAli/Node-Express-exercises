@@ -1,0 +1,27 @@
+<ul>
+    {{#each tours}}
+        {{! Comment in Handlebars which is not going to show up in the HTML source code}}
+    <li>
+        {{name}} - {{price}}
+        {{#if ../currencies}}
+            {{../../currency.abbrev}}
+        {{/if}}
+    </li>
+    {{/each}}
+<ul>
+{{#unless curriencies}}
+    <p>All prices in {{currency.name}}</p>
+{{/unless}}
+{{#if specialsUrl}}
+    <p><a href="{{specialsUrl}}">Specials</a></p>
+{{else}}
+    <p>No specials</p>
+{{/if}}
+<p>
+    {{#each currencies}}
+        <a href="#" class="currency">{{.}}</a>
+    {{else}}
+        {{currency.name}} only accepted
+    {{/each}}
+</p>
+</ul>

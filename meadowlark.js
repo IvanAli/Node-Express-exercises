@@ -1,5 +1,6 @@
 var express = require('express');
 var fortune = require('./lib/fortune.js');
+var weather = require('./lib/weatherdata.js');
 var app = express();
 
 var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
@@ -24,6 +25,21 @@ app.get('/about', function(request, response) {
     response.render('about', {
         fortune: randFortune,
         pageTestScript: '/qa/tests-about.js'
+    });
+});
+
+app.get('/handlebars', function(request, response) {
+    response.render('handlebars', {
+        currency: {
+            name: 'United States dollars',
+            abbrev: 'USD',
+        },
+        tours: [
+            { name: 'Hood River', price: '$99.95' },
+            { name: 'Oregon Coast', price: '$159.95' },
+        ],
+        specialsUrl: '/january-specials',
+        currencies: [ 'USD', 'GBP', 'BTC' ],
     });
 });
 
@@ -55,6 +71,12 @@ app.use(function(error, request, response, next) {
     console.error(error.stack);
     response.status(500);
     response.render('500');
+});
+
+app.use(function(request, response, next) {
+    if (!response.locals.partials) response.locals.partials = {};
+    response.locals.partials.weather = weather.getWeatherData();
+    next(); // I don't know what this is for yet 
 });
 
 app.listen(app.get('port'), function() {
