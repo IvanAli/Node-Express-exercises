@@ -71,6 +71,19 @@ app.get('/headers', function(request, response) {
     response.send(s);
 });
 
+app.get('/nursery-rhyme', function(request, response) {
+    response.render('nursery-rhyme');
+});
+
+app.get('/data/nursery-rhyme', function(request, response) {
+    response.json({
+        animal: 'cat',
+        bodyPart: 'tail',
+        adjective: 'interesting',
+        noun: 'me'
+    });
+});
+
 app.use(function(request, response) {
     response.status(404);
     response.render('404');
