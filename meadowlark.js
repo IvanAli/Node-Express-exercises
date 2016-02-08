@@ -3,7 +3,16 @@ var fortune = require('./lib/fortune.js');
 var weather = require('./lib/weatherdata.js');
 var app = express();
 
-var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
+var handlebars = require('express3-handlebars').create({
+    defaultLayout: 'main',
+    helpers: {
+        section: function(name, options) {
+            if (!this._sections) this._sections = {};
+            this._sections[name] = options.fn(this);
+            return null;
+        }
+    }
+});
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
@@ -76,7 +85,7 @@ app.use(function(error, request, response, next) {
 app.use(function(request, response, next) {
     if (!response.locals.partials) response.locals.partials = {};
     response.locals.partials.weather = weather.getWeatherData();
-    next(); // I don't know what this is for yet 
+    next(); // I don't know what this is for yet
 });
 
 app.listen(app.get('port'), function() {
