@@ -1,6 +1,7 @@
 var express = require('express');
 var fortune = require('./lib/fortune.js');
 var weather = require('./lib/weatherdata.js');
+var credentials = require('./credentials.js');
 var formidable = require('formidable');
 var app = express();
 
@@ -19,8 +20,16 @@ app.set('view engine', 'handlebars');
 
 app.use(express.static(__dirname + '/public'));
 app.use(require('body-parser')());
+app.use(require('cookie-parser')(credentials.cookieSecret));
+app.use(require('express-session')());
 
 app.set('port', process.env.PORT || 3000);
+
+app.use(function(request, response, next) {
+    response.locals.flash = request.session.flash;
+    delete request.session.flash;
+    next();
+});
 
 app.use(function(request, response, next) {
     response.locals.showTests = app.get('env') !== 'production' && request.query.test === '1';
@@ -28,6 +37,8 @@ app.use(function(request, response, next) {
 });
 
 app.get('/', function(request, response) {
+    response.cookie('monster', 'nom nom');
+    response.cookie('signed_monster', 'nom nom', { signed: true });
     response.render('home');
 });
 
@@ -109,11 +120,12 @@ app.post('/contest/vacation-photo/:year/:month', function(request, response) {
 });
 
 app.post('/process', function(request, response) {
-    // console.log('Form', request.query.form);
-    // console.log('CSRF token:', request.body._csrf);
-    // console.log('Name', request.body.name);
-    // console.log('Email', request.body.email);
     if (request.xhr || request.accepts('json,html') === 'json') {
+        request.session.flash = {
+            type: 'success',
+            intro: 'Thank you',
+            message: 'You are now signed up'
+        }
         response.send({success: true});
     }
     else {
