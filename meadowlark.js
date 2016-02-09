@@ -1,6 +1,7 @@
 var express = require('express');
 var fortune = require('./lib/fortune.js');
 var weather = require('./lib/weatherdata.js');
+var formidable = require('formidable');
 var app = express();
 
 var handlebars = require('express3-handlebars').create({
@@ -87,6 +88,24 @@ app.get('/data/nursery-rhyme', function(request, response) {
 
 app.get('/newsletter', function(request, response) {
     response.render('newsletter', {csrf: 'temp value'});
+});
+
+app.get('/contest/vacation-photo', function(request, response) {
+    var now = new Date();
+    response.render('contest/vacation-photo', {
+        year: now.getFullYear(),
+        month: now.getMonth()
+    });
+});
+
+app.post('/contest/vacation-photo/:year/:month', function(request, response) {
+    var form = new formidable.IncomingForm();
+    form.parse(request, function(error, fields, files) {
+        if (error) return response.redirect(303, '/error');
+        console.log('Fields', fields);
+        console.log('Files', files);
+        response.redirect(303, '/thank-you');
+    });
 });
 
 app.post('/process', function(request, response) {
