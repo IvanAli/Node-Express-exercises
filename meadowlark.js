@@ -17,6 +17,7 @@ app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
 app.use(express.static(__dirname + '/public'));
+app.use(require('body-parser')());
 
 app.set('port', process.env.PORT || 3000);
 
@@ -82,6 +83,23 @@ app.get('/data/nursery-rhyme', function(request, response) {
         adjective: 'interesting',
         noun: 'me'
     });
+});
+
+app.get('/newsletter', function(request, response) {
+    response.render('newsletter', {csrf: 'temp value'});
+});
+
+app.post('/process', function(request, response) {
+    // console.log('Form', request.query.form);
+    // console.log('CSRF token:', request.body._csrf);
+    // console.log('Name', request.body.name);
+    // console.log('Email', request.body.email);
+    if (request.xhr || request.accepts('json,html') === 'json') {
+        response.send({success: true});
+    }
+    else {
+        response.redirect(303, '/thank-you');
+    }
 });
 
 app.use(function(request, response) {
